@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?
 
-require_once "chat.inc";
+require_once __DIR__."/../includes/demo.inc";
 
-$app = new Ratchet\App("chat.stevemeyers.net", 8080, "192.41.86.155");
+$app = new Ratchet\App("chat.local", 8080);
 $app->route("/chat", new Demo\Chat());
 $app->run();
 
