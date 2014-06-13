@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "48111ab0f089c10a3feefe1bec291c1a",
+    "hash": "2d6ee70015190df6b2b3b5942852beb3",
     "packages": [
         {
             "name": "cboden/ratchet",
@@ -334,6 +334,48 @@
                 "event-loop"
             ],
             "time": "2013-07-21 02:23:09"
+        },
+        {
+            "name": "react/partial",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/partial.git",
+                "reference": "5ff119c3b708cab6119713f9142f2fb0aed54bfc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/partial/zipball/5ff119c3b708cab6119713f9142f2fb0aed54bfc",
+                "reference": "5ff119c3b708cab6119713f9142f2fb0aed54bfc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "React\\Partial": "src"
+                },
+                "files": [
+                    "src/React/Partial/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Partial function application.",
+            "keywords": [
+                "functional-programming",
+                "partial"
+            ],
+            "time": "2013-08-30 19:35:50"
         },
         {
             "name": "react/socket",
