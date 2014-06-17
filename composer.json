@@ -7,6 +7,7 @@
     "require": {
 		"cboden/Ratchet": "0.3.*",
 		"react/zmq": "0.2.*",
-		"react/partial": "~2.0"
+		"react/partial": "~2.0",
+		"react/http": "*"
     }
 }
