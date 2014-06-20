@@ -15,7 +15,8 @@
 </head>
 
 <script type="text/javascript">
-var conn = new WebSocket('ws://chat.local:8080/chat');
+var ws_url = 'ws://'+window.location.hostname+':8080/chat';
+var conn = new WebSocket(ws_url);
 var msg_num = 0;
 var user_color = "000000";
 var user_name = "Me";
@@ -123,12 +124,12 @@ function logout() {
 }
 
 $(function() {
-	$("#auth-color").colorPicker();
 	$("#input-message").on("keypress", function(e) {
 		if (e.keyCode === 13) {
 			send_chat();
 		}
 	});
+	display_message("Connecting to: " + ws_url, "font-weight: bold");
 });
 </script>
 
@@ -139,7 +140,6 @@ div#output > div {
 }
 div#output > div:first-child { border-top: none; }
 div#input { display: none; }
-div.colorPicker-picker { display: inline-block; }
 a#btn-logout { display: none; }
 </style>
 
@@ -154,9 +154,13 @@ a#btn-logout { display: none; }
 
 <div id="output" style="height: 400px"></div>
 
-<div id="auth">
-	Display name: <input type="text" class="span2" id="auth-name" value="" />
+<div id="auth" class="form-inline">
+	<label>Display name:</label>
+	<input type="text" class="span2" id="auth-name" value="" />
+	
+	<label>Color:</label>
 	<input type="text" class="span1" id="auth-color" value="#000000" />
+	
 	<a href="javascript:void(0)" onclick="authenticate(); return false;" class="btn btn-primary">Start</a>
 </div>
 

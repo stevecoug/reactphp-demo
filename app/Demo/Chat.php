@@ -28,14 +28,14 @@ class Chat implements MessageComponentInterface {
 		];
 		$this->clients->attach($conn, $info);
 		
-		echo "CONNECTED: Connection #$conn_id\n";
+		echo "WS CONNECTED: Connection #$conn_id\n";
 		
 		if ($name = $conn->WebSocket->request->getCookie("demo_chat_name")) {
 			$color = $conn->WebSocket->request->getCookie("demo_chat_color");
 			try {
 				$this->setupAuth($conn, $name, $color, $info);
 			} catch (\Exception $e) {
-				echo "Invalid cookie auth received ($conn_id)\n";
+				echo "WS Invalid cookie auth received ($conn_id)\n";
 			}
 		}
 	}
@@ -68,7 +68,7 @@ class Chat implements MessageComponentInterface {
 		$info = $this->clients->offsetGet($conn);
 		$this->clients->detach($conn);
 		
-		printf("DISCONNECTED: %s\n", $info['name']);
+		printf("WS DISCONNECTED: %s\n", $info['name']);
 	}
 	
 	public function onError(ConnectionInterface $conn, \Exception $e) {
