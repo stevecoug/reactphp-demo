@@ -32,27 +32,35 @@ class Chat implements MessageComponentInterface {
 		
 		if ($name = $conn->WebSocket->request->getCookie("demo_chat_name")) {
 			$color = $conn->WebSocket->request->getCookie("demo_chat_color");
-			$this->setupAuth($conn, $name, $color, $info);
+			try {
+				$this->setupAuth($conn, $name, $color, $info);
+			} catch (\Exception $e) {
+				echo "Invalid cookie auth received ($conn_id)\n";
+			}
 		}
 	}
 	
 	public function onMessage(ConnectionInterface $from_conn, $payload) {
-		$data = json_decode($payload);
-		$info = $this->clients->offsetGet($from_conn);
-		
-		switch ($data->type) {
-			case "chat":
-				$this->recvMessage($from_conn, $data, $info);
-			break;
+		try {
+			$data = json_decode($payload);
+			$info = $this->clients->offsetGet($from_conn);
 			
-			case "auth":
-				$this->setupAuth($from_conn, $data->name, substr($data->color, 1), $info);
-			break;
-			
-			default:
-				print_r($data);
-				$this->sendError($from_conn, "Unknown message type received: $data->type");
-			break;
+			switch ($data->type) {
+				case "chat":
+					$this->recvMessage($from_conn, $data, $info);
+				break;
+				
+				case "auth":
+					$this->setupAuth($from_conn, $data->name, substr($data->color, 1), $info);
+				break;
+				
+				default:
+					print_r($data);
+					$this->sendError($from_conn, "Unknown message type received: $data->type");
+				break;
+			}
+		} catch (\Exception $e) {
+			$this->sendError($from_conn, $e->getMessage());
 		}
 	}
 	
@@ -67,6 +75,25 @@ class Chat implements MessageComponentInterface {
 		$conn->close();
 	}
 	
+	private function validateName($name) {
+		if (strlen($name) < 3) {
+			throw new \Exception("Display name ($name) must be at least 3 characters long");
+		}
+		
+		if (strlen($name) > 20) {
+			throw new \Exception("Display name ($name) cannot exceed 20 characters long");
+		}
+		if (!preg_match('/^[A-Za-z]([A-Za-z0-9]+[ ._-])*[A-Za-z0-9]+$/', $name)) {
+			throw new \Exception("Display name ($name) contains illegal characters");
+		}
+	}
+	
+	private function validateColor($color) {
+		if (!preg_match('/^[0-9a-fA-F]{6}$/', $color)) {
+			throw new \Exception("Invalid color selected: $color");
+		}
+	}
+	
 	private function setupAuth($conn, $name, $color, &$info) {
 		printf(" + AUTH (%d): %s - %s\n", $info['id'], $name, $color);
 		
@@ -74,16 +101,8 @@ class Chat implements MessageComponentInterface {
 			$info = $this->clients->offsetGet($conn);
 		}
 		
-		$error = false;
-		if (strlen($name) < 3) $error = "Display name ($name) must be at least 3 characters long";
-		if (strlen($name) > 20) $error = "Display name ($name) cannot exceed 20 characters long";
-		if (!preg_match('/^[A-Za-z]([A-Za-z0-9]+[ ._-])*[A-Za-z0-9]+$/', $name)) $error = "Display name ($name) contains illegal characters";
-		if (!preg_match('/^[0-9a-fA-F]{6}$/', $color)) $error = "Invalid color selected: $color";
-		
-		if ($error !== false) {
-			$this->sendError($conn, $error);
-			return false;
-		}
+		$this->validateName($name);
+		$this->validateColor($color);
 		
 		$conn->send(json_encode([
 			"type" => "auth",
