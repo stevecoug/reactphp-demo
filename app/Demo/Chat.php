@@ -94,7 +94,7 @@ class Chat implements MessageComponentInterface {
 		}
 	}
 	
-	private function setupAuth($conn, $name, $color, &$info) {
+	private function setupAuth($conn, $name, $color, $info) {
 		printf(" + AUTH (%d): %s - %s\n", $info['id'], $name, $color);
 		
 		if ($info === null) {
