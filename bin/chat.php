@@ -15,9 +15,14 @@ $http = new React\Http\Server($http_socket);
 $http->on('request', [ new Demo\Http(), "onRequest" ]);
 $http_socket->listen(8000, $ip);
 
+echo "Web server active at http://localhost:8000/\n";
+
 
 $app = new Ratchet\App($hostname, 8080, $ip, $loop);
 $app->route("/chat", new Demo\Chat());
+
+echo "Chat server active at ws://localhost:8080/chat\n";
+
 $app->run();
 
 

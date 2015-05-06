@@ -6,9 +6,10 @@ define("HTDOCS", realpath(__DIR__."/../../htdocs"));
 class Http {
 	public function onRequest($request, $response) {
 		$path = $request->getPath();
+		if ($path === "/") $path = "/index.html";
+		
 		$file = realpath(HTDOCS.$path);
 		
-		if ($path === "/") return $this->redirect($response, "/chat.html");
 		if (substr($file, 0, strlen(HTDOCS)) !== HTDOCS || !is_file($file)) return $this->error404($response, $path);
 		
 		$ext = pathinfo($file, PATHINFO_EXTENSION);

@@ -29,15 +29,6 @@ class Chat implements MessageComponentInterface {
 		$this->clients->attach($conn, $info);
 		
 		echo "WS CONNECTED: Connection #$conn_id\n";
-		
-		if ($name = $conn->WebSocket->request->getCookie("demo_chat_name")) {
-			$color = $conn->WebSocket->request->getCookie("demo_chat_color");
-			try {
-				$this->setupAuth($conn, $name, $color, $info);
-			} catch (\Exception $e) {
-				echo "WS Invalid cookie auth received ($conn_id)\n";
-			}
-		}
 	}
 	
 	public function onMessage(ConnectionInterface $from_conn, $payload) {

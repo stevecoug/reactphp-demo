@@ -8,7 +8,6 @@
 	<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
 	<script src='//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.pack.js'></script>
 	<script src='//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js'></script>
-	<script src="/js/jquery.cookie.js"/></script>
 	<link href='//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.css' rel='styleSheet' type='text/css' />
 	<link href='//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css' rel='styleSheet' type='text/css' />
 	<link href='//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css' rel='styleSheet' type='text/css' />
@@ -45,7 +44,7 @@ conn.onmessage = function(e) {
 			}
 			message += escape_html(data.message);
 			if (data.color) {
-				style += "color:"+data.color+";";
+				style += "color: #"+data.color+";";
 			}
 			if (data.italic) {
 				style += "font-style: italic;";
@@ -60,10 +59,6 @@ conn.onmessage = function(e) {
 				
 				user_name = data.name;
 				user_color = data.color;
-				
-				$.cookie("demo_chat_name", user_name);
-				$.cookie("demo_chat_color", user_color);
-				$("#btn-logout").css("display", "inline");
 				
 				display_message("You are connected as: " + user_name, "font-style: italic;");
 			}
@@ -117,11 +112,6 @@ function authenticate() {
 		"color": $("#auth-color").val()
 	});
 }
-function logout() {
-	$.removeCookie("demo_chat_name");
-	$.removeCookie("demo_chat_color");
-	return true;
-}
 
 $(function() {
 	$("#input-message").on("keypress", function(e) {
@@ -140,18 +130,9 @@ div#output > div {
 }
 div#output > div:first-child { border-top: none; }
 div#input { display: none; }
-a#btn-logout { display: none; }
 </style>
 
 <body>
-<div class="well">
-	<h1>Welcome to the chat demo</h1>
-	
-	<a href="/" class="btn">Home</a>
-	<a href="/chat.html" class="btn btn-success">Refresh</a>
-	<a href="/chat.html" id="btn-logout" class="btn btn-danger" onclick="return logout();">Log out</a>
-</div>
-
 <div id="output" style="height: 400px"></div>
 
 <div id="auth" class="form-inline">
