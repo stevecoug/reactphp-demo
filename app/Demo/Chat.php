@@ -7,7 +7,25 @@ use Ratchet\ConnectionInterface;
 
 class Chat implements MessageComponentInterface {
 	protected $clients;
-	protected $next_conn_id = 1;
+	protected $next_conn_id = 0;
+	
+	private $auto_auth = true;
+	private $possible_names = [
+		"Fred",
+		"Barney",
+		"Wilma",
+		"Pebbles",
+		"Bamm-Bamm",
+		"Betty",
+		"Dino",
+	];
+	private $possible_colors = [
+		"Red" => "d00000",
+		"Orange" => "e08000",
+		"Green" => "00d000",
+		"Blue" => "0000d0",
+		"Purple" => "c000c0",
+	];
 	
 	public function __construct() {
 		$this->clients = new \SplObjectStorage;
@@ -15,20 +33,27 @@ class Chat implements MessageComponentInterface {
 	
 	public function onOpen(ConnectionInterface $conn) {
 		$conn_id = $this->next_conn_id++;
+		
 		$name = "Connection #$conn_id";
-		$auth = false;
-		$color = "000000";
+		$color_value = "000000";
 		
 		$info = [
 			"id" => $conn_id,
 			"conn" => $conn,
-			"auth" => $auth,
+			"auth" => false,
 			"name" => $name,
-			"color" => $color,
+			"color" => $color_value,
 		];
 		$this->clients->attach($conn, $info);
 		
-		echo "WS CONNECTED: Connection #$conn_id\n";
+		if ($this->auto_auth) {
+			$color_name = array_keys($this->possible_colors)[($conn_id % 5)];
+			$color_value = $this->possible_colors[$color_name];
+			$name = "$color_name " . $this->possible_names[($conn_id % 7)];
+			$this->setupAuth($conn, $name, $color_value, $info);
+		}
+		
+		echo "WS CONNECTED #$conn_id: $name ($color_value)\n";
 	}
 	
 	public function onMessage(ConnectionInterface $from_conn, $payload) {
