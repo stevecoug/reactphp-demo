@@ -12,7 +12,7 @@ $loop = React\EventLoop\Factory::create();
 
 $http_socket = new React\Socket\Server($loop);
 $http = new React\Http\Server($http_socket);
-$http->on('request', [ new Demo\Http(), "onRequest" ]);
+$http->on('request', [ new Demo\Http(__DIR__."/../htdocs"), "onRequest" ]);
 $http_socket->listen(8000, $ip);
 
 echo "Web server active at http://localhost:8000/\n";
