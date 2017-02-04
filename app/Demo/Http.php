@@ -10,7 +10,9 @@ class Http {
 	}
 	public function onRequest($request, $response) {
 		$path = $request->getPath();
-		if ($path === "/") $path = "/index.html";
+		if (substr($path, -1) === "/") {
+			return $this->redirect($response, $path."index.html");
+		}
 		
 		$file = realpath($this->htdocs.$path);
 		

@@ -25,6 +25,3 @@ echo "Chat server active at ws://localhost:8080/chat\n";
 
 $app->run();
 
-
-
-?>

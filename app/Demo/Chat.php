@@ -9,7 +9,6 @@ class Chat implements MessageComponentInterface {
 	protected $clients;
 	protected $next_conn_id = 0;
 	
-	private $auto_auth = true;
 	private $possible_names = [
 		"Fred",
 		"Barney",
@@ -46,12 +45,10 @@ class Chat implements MessageComponentInterface {
 		];
 		$this->clients->attach($conn, $info);
 		
-		if ($this->auto_auth) {
-			$color_name = array_keys($this->possible_colors)[($conn_id % 5)];
-			$color_value = $this->possible_colors[$color_name];
-			$name = "$color_name " . $this->possible_names[($conn_id % 7)];
-			$this->setupAuth($conn, $name, $color_value, $info);
-		}
+		$color_name = array_keys($this->possible_colors)[($conn_id % 5)];
+		$color_value = $this->possible_colors[$color_name];
+		$name = "$color_name " . $this->possible_names[($conn_id % 7)];
+		$this->setupAuth($conn, $name, $color_value, $info);
 		
 		echo "WS CONNECTED #$conn_id: $name ($color_value)\n";
 	}
@@ -66,13 +63,9 @@ class Chat implements MessageComponentInterface {
 					$this->recvMessage($from_conn, $data, $info);
 				break;
 				
-				case "auth":
-					$this->setupAuth($from_conn, $data->name, substr($data->color, 1), $info);
-				break;
-				
 				default:
 					print_r($data);
-					$this->sendError($from_conn, "Unknown message type received: $data->type");
+					throw new \Exception("Unknown message type received: $data->type");
 				break;
 			}
 		} catch (\Exception $e) {
@@ -91,34 +84,12 @@ class Chat implements MessageComponentInterface {
 		$conn->close();
 	}
 	
-	private function validateName($name) {
-		if (strlen($name) < 3) {
-			throw new \Exception("Display name ($name) must be at least 3 characters long");
-		}
-		
-		if (strlen($name) > 20) {
-			throw new \Exception("Display name ($name) cannot exceed 20 characters long");
-		}
-		if (!preg_match('/^[A-Za-z]([A-Za-z0-9]+[ ._-])*[A-Za-z0-9]+$/', $name)) {
-			throw new \Exception("Display name ($name) contains illegal characters");
-		}
-	}
-	
-	private function validateColor($color) {
-		if (!preg_match('/^[0-9a-fA-F]{6}$/', $color)) {
-			throw new \Exception("Invalid color selected: $color");
-		}
-	}
-	
 	private function setupAuth($conn, $name, $color, $info) {
 		printf(" + AUTH (%d): %s - %s\n", $info['id'], $name, $color);
 		
 		if ($info === null) {
 			$info = $this->clients->offsetGet($conn);
 		}
-		
-		$this->validateName($name);
-		$this->validateColor($color);
 		
 		$conn->send(json_encode([
 			"type" => "auth",
@@ -156,4 +127,3 @@ class Chat implements MessageComponentInterface {
 	}
 }
 
-?>
